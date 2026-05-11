@@ -46,7 +46,7 @@ services:
         condition: service_started
 
   postgres:
-    image: ${REGISTRY_PREFIX_DOCKER_HUB:-}postgres:18.3-alpine
+    image: ${REGISTRY_PREFIX_DOCKER_HUB:-}postgres:17-alpine
     restart: unless-stopped
     networks:
       - lms-network
