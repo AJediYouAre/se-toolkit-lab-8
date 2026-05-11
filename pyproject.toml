@@ -4,8 +4,7 @@ members = [
   "qwen-code-api",
   "mcp/mcp-lms",
 
-  # Task 1 — uncomment after you create the nanobot/ project.
-  # "nanobot",
+  "nanobot",
   
   # Task 2B — uncomment after you add the webchat channel.
   # "nanobot-websocket-channel/nanobot-channel-protocol",
