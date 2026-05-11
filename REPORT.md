@@ -91,11 +91,23 @@ Which lab's scores would you like to view?
 
 ## Task 2A — Deployed agent
 
-<!-- Paste a short nanobot startup log excerpt showing the gateway started inside Docker -->
+```
+🐈 Starting nanobot gateway version 0.1.4.post5 on port 18790...
+✓ Channels enabled: webchat
+✓ Heartbeat: every 1800s
+WebChat relay listening on 127.0.0.1:8766
+WebChat starting on 0.0.0.0:8765
+server listening on 0.0.0.0:8765
+MCP server 'lms': connected, 9 tools registered
+MCP server 'webchat': connected, 1 tools registered
+Agent loop started
+```
 
 ## Task 2B — Web client
 
-<!-- Screenshot of a conversation with the agent in the Flutter web app -->
+- Flutter web app served at `/flutter` via Caddy (HTTP 200)
+- WebSocket endpoint `/ws/chat` proxies to nanobot:8765 (WebSocket upgrade confirmed)
+- nanobot WebChat channel active on port 8765, relay on 8766
 
 ## Task 3A — Structured logging
 
