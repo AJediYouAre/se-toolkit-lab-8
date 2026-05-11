@@ -138,10 +138,31 @@ Flutter chat UI:
 
 ![Flutter WebChat screenshot](flutter_chat_screenshot.png)
 
+WebSocket conversation with the agent (tested via `websocat` through Caddy at `ws://localhost:42002/ws/chat?access_key=...`):
+
+```
+Client → {"content": "Hello! What labs are available?"}
+
+Server → {"type": "text", "content": "Here are the labs currently available in the LMS:
+
+1. **Lab 01 – Products, Architecture & Roles**
+2. **Lab 02 — Run, Fix, and Deploy a Backend Service**
+3. **Lab 03 — Backend API: Explore, Debug, Implement, Deploy**
+4. **Lab 04 — Testing, Front‑end, and AI Agents**
+5. **Lab 05 — Data Pipeline and Analytics Dashboard**
+6. **Lab 06 — Build Your Own Agent**
+7. **Lab 07 — Build a Client with an AI Coding Agent**
+8. **lab‑08**
+
+Let me know if you'd like details about any specific lab or want to see scores, pass rates, or other metrics for one of them!", "format": "markdown"}
+```
+
+The agent called `mcp_lms_lms_labs` and `mcp_lms_lms_sync_pipeline` to fetch real LMS data before responding.
+
 - Flutter web app served at `/flutter` via Caddy (HTTP 200)
 - WebSocket endpoint `/ws/chat` proxies to nanobot:8765 (WebSocket upgrade confirmed)
 - nanobot WebChat channel active on port 8765, relay on 8766
-- Agent responds to user messages through the Flutter chat interface (see screenshot above)
+- Agent responds to user messages through the Flutter chat interface with real LMS-backed data
 
 ## Task 3A — Structured logging
 
