@@ -177,7 +177,7 @@ services:
 
   qwen-code-api:
     build:
-      context: ./qwen-code-api
+      context: ./llm-proxy
       args:
         REGISTRY_PREFIX_DOCKER_HUB: ${REGISTRY_PREFIX_DOCKER_HUB:-}
     restart: unless-stopped
@@ -185,40 +185,21 @@ services:
       - lms-network
     ports:
       - ${QWEN_CODE_API_HOST_ADDRESS:?'QWEN_CODE_API_HOST_ADDRESS is required'}:${QWEN_CODE_API_HOST_PORT:?'QWEN_CODE_API_HOST_PORT is required'}:${QWEN_CODE_API_CONTAINER_PORT:?'QWEN_CODE_API_CONTAINER_PORT is required'}
-    volumes:
-      - ~/.qwen:/mnt/qwen-creds:ro
     environment:
       - PORT=${QWEN_CODE_API_CONTAINER_PORT:?'QWEN_CODE_API_CONTAINER_PORT is required'}
-      - ADDRESS=${QWEN_CODE_API_CONTAINER_ADDRESS:?'QWEN_CODE_API_CONTAINER_ADDRESS is required'}
-      - DEFAULT_MODEL=${QWEN_CODE_API_MODEL:?'QWEN_CODE_API_MODEL is required'}
-      - LOG_LEVEL=${QWEN_CODE_API_LOG_LEVEL:?'QWEN_CODE_API_LOG_LEVEL is required'}
-      - MAX_RETRIES=${QWEN_CODE_API_MAX_RETRIES:?'QWEN_CODE_API_MAX_RETRIES is required'}
-      - RETRY_DELAY_MS=${QWEN_CODE_API_RETRY_DELAY_MS:?'QWEN_CODE_API_RETRY_DELAY_MS is required'}
-      - QWEN_CODE_AUTH_USE=${QWEN_CODE_API_AUTH_USE:?'QWEN_CODE_API_AUTH_USE is required'}
-      - LOG_REQUESTS=${QWEN_CODE_API_LOG_REQUESTS:?'QWEN_CODE_API_LOG_REQUESTS is required'}
-      - QWEN_CODE_API_KEY=${QWEN_CODE_API_KEY:?'QWEN_CODE_API_KEY is required'}
+      - ADDRESS=0.0.0.0
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-${LLM_API_KEY}}
       - OTEL_SERVICE_NAME=Qwen Code API
       - OTEL_TRACES_EXPORTER=otlp
       - OTEL_METRICS_EXPORTER=none
       - OTEL_LOGS_EXPORTER=otlp
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:${CONST_OTEL_COLLECTOR_GRPC_PORT:?'CONST_OTEL_COLLECTOR_GRPC_PORT is required'}
       - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
-      - OTEL_PYTHON_LOG_CORRELATION=true
     depends_on:
       otel-collector:
         condition: service_started
     healthcheck:
-      test:
-        - CMD
-        - python
-        - "-c"
-        - |
-          import urllib.request
-          req = urllib.request.Request(
-              'http://localhost:${QWEN_CODE_API_CONTAINER_PORT:?'QWEN_CODE_API_CONTAINER_PORT is required'}/health',
-              headers={'X-API-Key': '${QWEN_CODE_API_KEY:?'QWEN_CODE_API_KEY is required'}'}
-          )
-          urllib.request.urlopen(req)
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:${QWEN_CODE_API_CONTAINER_PORT:?'QWEN_CODE_API_CONTAINER_PORT is required'}/"]
       interval: 30s
       timeout: 10s
       retries: 3
